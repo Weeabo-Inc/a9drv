@@ -1,0 +1,29 @@
+[package]
+name = "a9drv"
+version = "0.1.0"
+edition = "2021"
+description = "Bind the Apple A9 DFU node (USB\\VID_05AC&PID_1227) to an already-present libusbK driver-store package, verify the achieved driver service, and restore the previous binding. A scriptable replacement for Zadig."
+license = "MIT"
+publish = false
+
+[[bin]]
+name = "a9drv"
+path = "src/main.rs"
+
+[dependencies]
+# Same dependency a9ctl uses, same version, so the two crates resolve against
+# one cached copy. Nothing else: no clap (argument parsing is 200 lines and
+# unit-tested), no serde (JSON output is written by src/json.rs and is
+# unit-tested). Fewer dependencies is a smaller attack surface for a tool that
+# runs elevated and pokes the driver store.
+windows-sys = { version = "0.59", features = [
+    "Win32_Foundation",
+    "Win32_Devices_DeviceAndDriverInstallation",
+    "Win32_Devices_Properties",
+    "Win32_Security",
+    "Win32_System_Threading",
+] }
+
+[profile.release]
+opt-level = 2
+debug = 1
